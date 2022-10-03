@@ -1,41 +1,44 @@
 
 from django.shortcuts import render
 from rest_framework import status
-from .models import Person
-from .serializers import PersonSerializer
+from .models import Note
+from .serializers import NoteSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+
 @api_view(['GET', 'POST'])
-def person_list(request):
+def notes_list(request):
     if request.method == 'GET':
-        toys = Person.objects.all()
-        toys_serializer = PersonSerializer(toys, many=True)
-        return Response(toys_serializer.data)
+        notes = Note.objects.all()
+        notes_serializer = NoteSerializer(notes, many=True)
+        return Response(notes_serializer.data)
     elif request.method == 'POST':
-        toy_serializer = PersonSerializer(data=request.data)
-        if toy_serializer.is_valid():
-            toy_serializer.save()
-        return Response(toy_serializer.data,
-    status=status.HTTP_201_CREATED)
-    return Response(toy_serializer.errors,
-    status=status.HTTP_400_BAD_REQUEST)
+        notes_serializer = NoteSerializer(data=request.data)
+        if notes_serializer.is_valid():
+            notes_serializer.save()
+            return Response(notes_serializer.data,
+                            status=status.HTTP_201_CREATED)
+    return Response(notes_serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def person_detail(request, pk):
+def note_detail(request, pk):
     try:
-        person = Person.objects.get(pk=pk)
-    except Person.DoesNotExist:
+        note = Note.objects.get(pk=pk)
+    except Note.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'GET':
-        person_serializer = PersonSerializer(person)
-        return Response(person_serializer.data)
+        note_serializer = Note(note)
+        return Response(note_serializer.data)
     elif request.method == 'PUT':
-        person_serializer = PersonSerializer(person_serializer, data=request.data)
-        if person_serializer.is_valid():
-            person_serializer.save()
-            return Response(person_serializer.data)
-        return Response(person_serializer.errors,
-        status=status.HTTP_400_BAD_REQUEST)
+        note_serializer = NoteSerializer(note_serializer, data=request.data)
+        if note_serializer.is_valid():
+            note_serializer.save()
+            return Response(note_serializer.data)
+        return Response(note_serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
-        person.delete()
+        note.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

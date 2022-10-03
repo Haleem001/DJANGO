@@ -1,8 +1,8 @@
-from .models import Person
+from .models import Note
 from rest_framework import serializers
 
 
-class PersonSerializer(serializers.ModelSerializer):
+class NoteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Person
+        model = Note
         fields = '__all__'
